@@ -1,8 +1,8 @@
 #EX01 pyqt 창띄우기 + icon 넣기
-#메뉴바 + status바 + 닫기 버튼
+#메뉴바 + 툴바 + status바 + 닫기 버튼
 
 import sys
-from PyQt5.QtWidgets import QApplication, qApp, QAction, QPushButton, QToolTip, QMainWindow
+from PyQt5.QtWidgets import QApplication, qApp, QAction, QPushButton, QToolTip, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import QCoreApplication
 
@@ -15,7 +15,7 @@ class MyApp(QMainWindow):
         self.statusBar().showMessage('Ready')
 
         #exit action 설정
-        exitAction = QAction(QIcon('exit.png'), 'Exit', self) #아이콘, 라벨
+        exitAction = QAction(QIcon('img/exit.png'), 'Exit', self) #아이콘, 라벨
         exitAction.setShortcut('Ctrl+Q') #단축키 설정
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(qApp.quit) #이 동작을 선택했을때 트리거된 시그널이 QApplication 의
@@ -25,6 +25,10 @@ class MyApp(QMainWindow):
         menubar.setNativeMenuBar(False)
         filemenu = menubar.addMenu('&File')  #‘F’ 앞에 앰퍼샌드가 있으므로 ‘Alt+F’가 File 메뉴의 단축키가 됨
         filemenu.addAction(exitAction)
+
+        #툴바
+        self.toolbar = self.addToolBar('Exit')
+        self.toolbar.addAction(exitAction)
 
         btn = QPushButton('종료', self)    #QPushButton의 인스턴스 생성, arg{버튼이 표시될 텍스트, 버튼이 위치할 부모 위젯}
         btn.move(190, 160)
@@ -41,10 +45,16 @@ class MyApp(QMainWindow):
 
         self.setWindowTitle("My first GUI")    #윈도우 창의 title 지정
         self.setWindowIcon(QIcon('img/ice.jpg')) #윈도우 아이콘 설정, Qicon({이미지경로})
-        self.setGeometry(300, 300, 300, 200)    #move와 resize를 합쳐놓음
-        #self.move(300, 300)
-        #self.resize(300, 200)
+
+        self.resize(500, 350)
+        self.center()
         self.show()
+
+    def center(self):
+        qr = self.frameGeometry()  #frameGeometry() 메서드를 이용해서 창의 위치와 크기 정보 가져옴.
+        cp = QDesktopWidget().availableGeometry().center()  #사용하는 모니터 화면의 가운데 위치를 파악
+        qr.moveCenter(cp)  #창의 직사각형 위치를 화면의 중심의 위치로 이동
+        self.move(qr.topLeft())   #현재 창의 중심이 화면의 중심과 일치하게 돼서 창이 가운데에 나타남
 
 if __name__ == '__main__':
     app = QApplication(sys.argv) # 모든 PyQt5 어플리케이션은 어플리케이션 객체를 생성해야 함
